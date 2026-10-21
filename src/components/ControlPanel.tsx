@@ -104,30 +104,38 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
 
   return (
     <div
-      className={`control-panel absolute top-3 left-3 bg-[#161b22]/95 border border-[#30363d] rounded-xl p-3 shadow-2xl backdrop-blur-md z-20 flex flex-col gap-2.5 transition-all text-[#e6edf3] ${
-        isMinimized ? 'w-[260px]' : 'w-[370px] max-h-[calc(100vh-24px)]'
+      className={`control-panel absolute top-3 left-3 bg-[#161b22]/95 border border-[#30363d] rounded-xl shadow-2xl backdrop-blur-md z-20 flex flex-col transition-all text-[#e6edf3] ${
+        isMinimized
+          ? 'w-auto min-w-[285px] max-w-[350px] p-2.5 gap-0'
+          : 'w-[370px] max-h-[calc(100vh-24px)] p-3 gap-2.5'
       }`}
     >
       {/* Panel Header */}
-      <div className="flex items-center justify-between gap-2 border-b border-[#30363d]/50 pb-2">
-        <div className="flex items-center gap-2">
-          <span className="font-black text-lg text-[#f0883e] tracking-tight">📐 点P</span>
-          <div className="text-xs font-mono font-bold text-[#58a6ff] whitespace-nowrap bg-[#0d1117] px-2 py-0.5 rounded border border-[#30363d]">
+      <div
+        className={`flex items-center justify-between gap-2.5 flex-nowrap whitespace-nowrap ${
+          isMinimized ? 'border-b-0 pb-0' : 'border-b border-[#30363d]/50 pb-2'
+        }`}
+      >
+        <div className="flex items-center gap-2 flex-nowrap shrink-0">
+          <span className="font-black text-lg text-[#f0883e] tracking-tight whitespace-nowrap shrink-0 select-none">
+            📐 点P
+          </span>
+          <div className="text-xs font-mono font-bold text-[#58a6ff] whitespace-nowrap shrink-0 bg-[#0d1117] px-2 py-0.5 rounded border border-[#30363d]">
             {hoverCoords ? `X: ${hoverCoords.x}, Y: ${hoverCoords.y}` : 'X: -, Y: -'}
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5">
+        <div className="flex items-center gap-1.5 shrink-0 flex-nowrap">
           <button
             onClick={handleResetBoard}
-            className="w-7 h-7 flex items-center justify-center bg-[#21262d] border border-[#30363d] rounded-md text-[#c9d1d9] hover:bg-[#30363d] hover:text-[#58a6ff] transition-colors"
+            className="w-7 h-7 flex items-center justify-center bg-[#21262d] border border-[#30363d] rounded-md text-[#c9d1d9] hover:bg-[#30363d] hover:text-[#58a6ff] transition-colors shrink-0"
             title="現在の世界を初期化"
           >
             <RotateCcw className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={() => setIsMinimized(!isMinimized)}
-            className="w-7 h-7 flex items-center justify-center bg-[#21262d] border border-[#30363d] rounded-md text-[#c9d1d9] hover:bg-[#30363d] hover:text-[#58a6ff] transition-colors"
+            className="w-7 h-7 flex items-center justify-center bg-[#21262d] border border-[#30363d] rounded-md text-[#c9d1d9] hover:bg-[#30363d] hover:text-[#58a6ff] transition-colors shrink-0"
             title={isMinimized ? '展開' : '最小化'}
           >
             {isMinimized ? <Plus className="w-3.5 h-3.5" /> : <Minus className="w-3.5 h-3.5" />}
