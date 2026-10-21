@@ -1,0 +1,6 @@
+{
+  "name": "点P シミュレーター (Point P Simulator)",
+  "description": "数学の問題でおなじみの『動く点P』を自由に動かして観察・制御できる幾何学シミュレーター。図形の輪郭周回、図形内放浪、リード拘束、頂点変形、複数世界管理に対応。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
