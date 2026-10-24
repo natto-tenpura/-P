@@ -72,6 +72,7 @@ export interface BoardData {
     hasLeash: boolean;
     leashTarget: string;
     leashLength: number;
+    color?: string;
   }[];
   shapes: {
     id: number;
@@ -98,3 +99,15 @@ export interface SimulationState {
   showTrails: boolean;
   showGridCoordinates: boolean;
 }
+
+export const POINT_COLOR_PALETTE = [
+  { name: 'ブルー', value: '#58a6ff' },
+  { name: 'グリーン', value: '#3fb950' },
+  { name: 'パープル', value: '#bc8cff' },
+  { name: 'ピンク', value: '#f778ba' },
+  { name: 'オレンジ', value: '#f0883e' },
+  { name: 'イエロー', value: '#d29922' },
+  { name: 'レッド', value: '#ff7b72' },
+  { name: 'シアン', value: '#39c5bb' },
+  { name: 'ホワイト', value: '#f0f6fc' },
+] as const;

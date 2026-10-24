@@ -6,6 +6,7 @@ import {
   BoardData,
   ShapeType,
   SimulationState,
+  POINT_COLOR_PALETTE,
 } from './types';
 import {
   createInitialVertices,
@@ -41,10 +42,12 @@ export default function App() {
     isOpen: boolean;
     pointId: string;
     currentName: string;
+    currentColor: string;
   }>({
     isOpen: false,
     pointId: '',
     currentName: '',
+    currentColor: '#58a6ff',
   });
 
   const isInitializedRef = useRef<boolean>(false);
@@ -70,6 +73,7 @@ export default function App() {
               hasLeash: p.hasLeash,
               leashTarget: p.leashTarget,
               leashLength: p.leashLength,
+              color: p.color,
             })),
             shapes: shapes.map((s) => ({
               id: s.id,
@@ -156,7 +160,7 @@ export default function App() {
             x: originX + p.relX,
             y: originY + p.relY,
             radius: 6,
-            color: '#58a6ff',
+            color: p.color || '#58a6ff',
             baseSpeed,
             speed: baseSpeed,
             angle,
@@ -352,6 +356,7 @@ export default function App() {
     const originY = window.innerHeight / 2;
     const baseSpeed = 1.6 + Math.random() * 0.8;
     const angle = Math.random() * Math.PI * 2;
+    const assignedColor = POINT_COLOR_PALETTE[points.length % POINT_COLOR_PALETTE.length].value;
 
     const newPt: PointData = {
       id: 'pt_' + Math.random().toString(36).substring(2, 9),
@@ -359,7 +364,7 @@ export default function App() {
       x: originX + (Math.random() - 0.5) * 150,
       y: originY + (Math.random() - 0.5) * 150,
       radius: 6,
-      color: '#58a6ff',
+      color: assignedColor,
       baseSpeed,
       speed: baseSpeed,
       angle,
@@ -500,14 +505,18 @@ export default function App() {
       isOpen: true,
       pointId: point.id,
       currentName: point.name,
+      currentColor: point.color || '#58a6ff',
     });
   };
 
-  const handleConfirmRename = (newName: string) => {
+  const handleConfirmRename = (newName: string, newColor?: string) => {
     if (renameModal.pointId) {
-      handleUpdatePoint(renameModal.pointId, { name: newName });
+      handleUpdatePoint(renameModal.pointId, {
+        name: newName,
+        ...(newColor ? { color: newColor } : {}),
+      });
     }
-    setRenameModal({ isOpen: false, pointId: '', currentName: '' });
+    setRenameModal({ isOpen: false, pointId: '', currentName: '', currentColor: '#58a6ff' });
   };
 
   return (
@@ -561,12 +570,15 @@ export default function App() {
         onClearTrails={handleClearTrails}
       />
 
-      {/* Canvas Click Rename Modal */}
+      {/* Canvas Click Rename & Color Modal */}
       <RenameModal
         isOpen={renameModal.isOpen}
         initialName={renameModal.currentName}
+        initialColor={renameModal.currentColor}
         onConfirm={handleConfirmRename}
-        onClose={() => setRenameModal({ isOpen: false, pointId: '', currentName: '' })}
+        onClose={() =>
+          setRenameModal({ isOpen: false, pointId: '', currentName: '', currentColor: '#58a6ff' })
+        }
       />
     </div>
   );

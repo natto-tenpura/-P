@@ -533,8 +533,8 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
             for (let i = 1; i < p.trail.length; i++) {
               ctx.lineTo(p.trail[i].x, p.trail[i].y);
             }
-            ctx.strokeStyle = 'rgba(88, 166, 255, 0.25)';
-            ctx.lineWidth = 1.5;
+            ctx.strokeStyle = p.color ? `${p.color}66` : 'rgba(88, 166, 255, 0.35)';
+            ctx.lineWidth = 1.8;
             ctx.stroke();
           }
         }
