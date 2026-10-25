@@ -74,6 +74,8 @@ export default function App() {
               leashTarget: p.leashTarget,
               leashLength: p.leashLength,
               color: p.color,
+              trailColor: p.trailColor,
+              leashColor: p.leashColor,
             })),
             shapes: shapes.map((s) => ({
               id: s.id,
@@ -83,6 +85,7 @@ export default function App() {
               relY: s.y - originY,
               size: s.size,
               vertices: s.vertices ? JSON.parse(JSON.stringify(s.vertices)) : null,
+              color: s.color,
             })),
             stakes: stakes.map((stk) => ({
               id: stk.id,
@@ -146,6 +149,7 @@ export default function App() {
               y: originY + s.relY,
               size: s.size,
               vertices: s.vertices ? JSON.parse(JSON.stringify(s.vertices)) : null,
+              color: s.color || '#58a6ff',
             } as ShapeData)
         )
       );
@@ -161,6 +165,7 @@ export default function App() {
             y: originY + p.relY,
             radius: 6,
             color: p.color || '#58a6ff',
+            trailColor: p.trailColor,
             baseSpeed,
             speed: baseSpeed,
             angle,
@@ -178,6 +183,7 @@ export default function App() {
             hasLeash: !!p.hasLeash,
             leashTarget: p.leashTarget || 'mouse',
             leashLength: p.leashLength || 120,
+            leashColor: p.leashColor || '#f0883e',
             trail: [],
           };
         })
@@ -417,6 +423,8 @@ export default function App() {
     const originX = window.innerWidth / 2;
     const originY = window.innerHeight / 2;
 
+    const assignedShapeColor = POINT_COLOR_PALETTE[shapes.length % POINT_COLOR_PALETTE.length].value;
+
     const newShape: ShapeData = {
       id: newId,
       type,
@@ -426,6 +434,7 @@ export default function App() {
       size,
       vertices:
         type === 'triangle' || type === 'rect' ? createInitialVertices(type, size) : null,
+      color: assignedShapeColor,
     };
 
     setShapes((prev) => [...prev, newShape]);

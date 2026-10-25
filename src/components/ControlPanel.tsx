@@ -69,6 +69,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
   const [isMinimized, setIsMinimized] = useState(false);
   const [newPointInput, setNewPointInput] = useState('');
   const [openColorPickerId, setOpenColorPickerId] = useState<string | null>(null);
+  const [openShapeColorPickerId, setOpenShapeColorPickerId] = useState<number | null>(null);
+  const [openLeashColorPickerId, setOpenLeashColorPickerId] = useState<string | null>(null);
 
   const currentBoard = boards.find((b) => b.id === currentBoardId);
   const nextPointName = getNextAvailablePointName(points.map((p) => p.name));
@@ -271,6 +273,23 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                       className="bg-[#161b22] border border-[#21262d] p-2 rounded-md flex flex-col gap-1.5"
                     >
                       <div className="flex items-center gap-1.5">
+                        {/* Shape Color Button */}
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setOpenShapeColorPickerId(
+                              openShapeColorPickerId === s.id ? null : s.id
+                            )
+                          }
+                          className={`w-4 h-4 rounded-full border shadow-xs shrink-0 transition-transform hover:scale-115 cursor-pointer ${
+                            openShapeColorPickerId === s.id
+                              ? 'ring-2 ring-white/50 border-white'
+                              : 'border-white/30'
+                          }`}
+                          style={{ backgroundColor: s.color || '#58a6ff' }}
+                          title="図形の色を変更"
+                        />
+
                         <input
                           type="text"
                           value={s.name}
@@ -285,6 +304,51 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                           ✕ 削除
                         </button>
                       </div>
+
+                      {/* Shape Color Picker Swatch Bar (expandable) */}
+                      {openShapeColorPickerId === s.id && (
+                        <div className="flex items-center gap-1.5 bg-[#0d1117] p-1.5 rounded-md border border-[#30363d]">
+                          <span className="text-[10px] text-[#8b949e] whitespace-nowrap">色:</span>
+                          <div className="flex items-center gap-1.5 flex-wrap flex-1">
+                            {POINT_COLOR_PALETTE.map((c) => (
+                              <button
+                                key={c.value}
+                                type="button"
+                                onClick={() => onUpdateShape(s.id, { color: c.value })}
+                                className={`w-3.5 h-3.5 rounded-full border transition-all ${
+                                  (s.color || '#58a6ff').toLowerCase() === c.value.toLowerCase()
+                                    ? 'scale-125 border-white ring-1 ring-white/60'
+                                    : 'border-white/20 hover:scale-115'
+                                }`}
+                                style={{ backgroundColor: c.value }}
+                                title={c.name}
+                              />
+                            ))}
+
+                            {/* Custom color input */}
+                            <label
+                              className="w-3.5 h-3.5 rounded-full border border-white/30 overflow-hidden relative cursor-pointer hover:scale-115 flex items-center justify-center bg-[#21262d]"
+                              title="カスタム色を選択"
+                            >
+                              <input
+                                type="color"
+                                value={s.color || '#58a6ff'}
+                                onChange={(e) => onUpdateShape(s.id, { color: e.target.value })}
+                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                              />
+                              <span className="text-[8px] text-white/90 font-bold leading-none">＋</span>
+                            </label>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setOpenShapeColorPickerId(null)}
+                            className="text-[10px] text-[#8b949e] hover:text-white px-1 leading-none"
+                            title="閉じる"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      )}
                       <div className="flex items-center gap-2 text-[11px] text-[#58a6ff] bg-[#58a6ff]/5 px-2 py-0.5 rounded">
                         <span className="whitespace-nowrap">サイズ:</span>
                         <input
@@ -425,60 +489,120 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                       </button>
                     </div>
 
-                    {/* Color Picker Swatch Bar (expandable) */}
+                    {/* Color Picker Swatch Bar (expandable: Point & Trail) */}
                     {openColorPickerId === p.id && (
-                      <div className="flex items-center gap-1.5 bg-[#0d1117] p-1.5 rounded-md border border-[#30363d]">
-                        <span className="text-[10px] text-[#8b949e] whitespace-nowrap">色:</span>
-                        <div className="flex items-center gap-1.5 flex-wrap flex-1">
-                          {POINT_COLOR_PALETTE.map((c) => (
-                            <button
-                              key={c.value}
-                              type="button"
-                              onClick={() => onUpdatePoint(p.id, { color: c.value })}
-                              className={`w-3.5 h-3.5 rounded-full border transition-all ${
-                                (p.color || '#58a6ff').toLowerCase() === c.value.toLowerCase()
-                                  ? 'scale-125 border-white ring-1 ring-white/60'
-                                  : 'border-white/20 hover:scale-115'
-                              }`}
-                              style={{ backgroundColor: c.value }}
-                              title={c.name}
-                            />
-                          ))}
+                      <div className="flex flex-col gap-2 bg-[#0d1117] p-2 rounded-md border border-[#30363d]">
+                        {/* Point Color Row */}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] text-[#8b949e] w-14 shrink-0 whitespace-nowrap">点の色:</span>
+                          <div className="flex items-center gap-1.5 flex-wrap flex-1">
+                            {POINT_COLOR_PALETTE.map((c) => (
+                              <button
+                                key={c.value}
+                                type="button"
+                                onClick={() => onUpdatePoint(p.id, { color: c.value })}
+                                className={`w-3.5 h-3.5 rounded-full border transition-all ${
+                                  (p.color || '#58a6ff').toLowerCase() === c.value.toLowerCase()
+                                    ? 'scale-125 border-white ring-1 ring-white/60'
+                                    : 'border-white/20 hover:scale-115'
+                                }`}
+                                style={{ backgroundColor: c.value }}
+                                title={`点: ${c.name}`}
+                              />
+                            ))}
 
-                          {/* Custom color input */}
-                          <label
-                            className="w-3.5 h-3.5 rounded-full border border-white/30 overflow-hidden relative cursor-pointer hover:scale-115 flex items-center justify-center bg-[#21262d]"
-                            title="自由な色を選択 (カラーパレット)"
+                            {/* Custom color input */}
+                            <label
+                              className="w-3.5 h-3.5 rounded-full border border-white/30 overflow-hidden relative cursor-pointer hover:scale-115 flex items-center justify-center bg-[#21262d]"
+                              title="カスタム点の色を選択"
+                            >
+                              <input
+                                type="color"
+                                value={p.color || '#58a6ff'}
+                                onChange={(e) => onUpdatePoint(p.id, { color: e.target.value })}
+                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                              />
+                              <span className="text-[8px] text-white/90 font-bold leading-none">＋</span>
+                            </label>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setOpenColorPickerId(null)}
+                            className="text-[10px] text-[#8b949e] hover:text-white px-1 leading-none"
+                            title="閉じる"
                           >
-                            <input
-                              type="color"
-                              value={p.color || '#58a6ff'}
-                              onChange={(e) => onUpdatePoint(p.id, { color: e.target.value })}
-                              className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
-                            />
-                            <span className="text-[8px] text-white/90 font-bold leading-none">＋</span>
-                          </label>
+                            ✕
+                          </button>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => setOpenColorPickerId(null)}
-                          className="text-[10px] text-[#8b949e] hover:text-white px-1 leading-none"
-                          title="閉じる"
-                        >
-                          ✕
-                        </button>
+
+                        {/* Trail Color Row */}
+                        <div className="flex items-center gap-1.5 pt-1.5 border-t border-[#21262d]">
+                          <span className="text-[10px] text-[#8b949e] w-14 shrink-0 whitespace-nowrap">軌跡の色:</span>
+                          <div className="flex items-center gap-1.5 flex-wrap flex-1">
+                            <button
+                              type="button"
+                              onClick={() => onUpdatePoint(p.id, { trailColor: undefined })}
+                              className={`px-1.5 py-0.5 text-[9px] rounded border transition-colors ${
+                                !p.trailColor
+                                  ? 'bg-[#1f6feb]/30 border-[#388bfd] text-[#58a6ff]'
+                                  : 'bg-[#21262d] border-[#30363d] text-[#8b949e] hover:text-white'
+                              }`}
+                              title="点と同じ色を使用"
+                            >
+                              同色
+                            </button>
+
+                            {POINT_COLOR_PALETTE.map((c) => (
+                              <button
+                                key={c.value}
+                                type="button"
+                                onClick={() => onUpdatePoint(p.id, { trailColor: c.value })}
+                                className={`w-3.5 h-3.5 rounded-full border transition-all ${
+                                  (p.trailColor || p.color || '#58a6ff').toLowerCase() ===
+                                    c.value.toLowerCase() && p.trailColor
+                                    ? 'scale-125 border-white ring-1 ring-white/60'
+                                    : 'border-white/20 hover:scale-115'
+                                }`}
+                                style={{ backgroundColor: c.value }}
+                                title={`軌跡: ${c.name}`}
+                              />
+                            ))}
+
+                            <label
+                              className="w-3.5 h-3.5 rounded-full border border-white/30 overflow-hidden relative cursor-pointer hover:scale-115 flex items-center justify-center bg-[#21262d]"
+                              title="カスタム軌跡の色を選択"
+                            >
+                              <input
+                                type="color"
+                                value={p.trailColor || p.color || '#58a6ff'}
+                                onChange={(e) => onUpdatePoint(p.id, { trailColor: e.target.value })}
+                                className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                              />
+                              <span className="text-[8px] text-white/90 font-bold leading-none">＋</span>
+                            </label>
+                          </div>
+                        </div>
                       </div>
                     )}
 
                     {/* Leash details if enabled */}
                     {p.hasLeash && (
-                      <div className="flex flex-col gap-1 bg-[#f0883e]/5 border border-[#f0883e]/20 p-1.5 rounded">
-                        <div className="flex items-center gap-2 text-[11px] text-[#f0883e]">
+                      <div
+                        className="flex flex-col gap-1.5 p-1.5 rounded border transition-colors"
+                        style={{
+                          backgroundColor: `${p.leashColor || '#f0883e'}0a`,
+                          borderColor: `${p.leashColor || '#f0883e'}33`,
+                        }}
+                      >
+                        <div
+                          className="flex items-center gap-2 text-[11px]"
+                          style={{ color: p.leashColor || '#f0883e' }}
+                        >
                           <span className="whitespace-nowrap">繋ぎ先:</span>
                           <select
                             value={p.leashTarget}
                             onChange={(e) => onUpdatePoint(p.id, { leashTarget: e.target.value })}
-                            className="flex-1 px-1.5 py-0.5 bg-[#0d1117] border border-[#30363d] rounded text-white text-[11px] focus:outline-none focus:border-[#f0883e]"
+                            className="flex-1 px-1.5 py-0.5 bg-[#0d1117] border border-[#30363d] rounded text-white text-[11px] focus:outline-none"
                           >
                             <option value="mouse">🖱 マウス</option>
                             {stakes.map((stk) => (
@@ -487,9 +611,79 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                               </option>
                             ))}
                           </select>
+
+                          {/* Leash Color Trigger Button */}
+                          <div className="flex items-center gap-1 shrink-0">
+                            <span className="text-[10px] text-[#8b949e]">色:</span>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setOpenLeashColorPickerId(
+                                  openLeashColorPickerId === p.id ? null : p.id
+                                )
+                              }
+                              className={`w-4 h-4 rounded-full border shadow-xs transition-transform hover:scale-115 cursor-pointer ${
+                                openLeashColorPickerId === p.id
+                                  ? 'ring-2 ring-white/50 border-white'
+                                  : 'border-white/30'
+                              }`}
+                              style={{ backgroundColor: p.leashColor || '#f0883e' }}
+                              title="リードの色を変更"
+                            />
+                          </div>
                         </div>
 
-                        <div className="flex items-center gap-2 text-[11px] text-[#f0883e]">
+                        {/* Leash Color Swatch Bar (expandable) */}
+                        {openLeashColorPickerId === p.id && (
+                          <div className="flex items-center gap-1.5 bg-[#0d1117] p-1.5 rounded border border-[#30363d]">
+                            <span className="text-[10px] text-[#8b949e] whitespace-nowrap">リード色:</span>
+                            <div className="flex items-center gap-1.5 flex-wrap flex-1">
+                              {POINT_COLOR_PALETTE.map((c) => (
+                                <button
+                                  key={c.value}
+                                  type="button"
+                                  onClick={() => onUpdatePoint(p.id, { leashColor: c.value })}
+                                  className={`w-3.5 h-3.5 rounded-full border transition-all ${
+                                    (p.leashColor || '#f0883e').toLowerCase() ===
+                                    c.value.toLowerCase()
+                                      ? 'scale-125 border-white ring-1 ring-white/60'
+                                      : 'border-white/20 hover:scale-115'
+                                  }`}
+                                  style={{ backgroundColor: c.value }}
+                                  title={`リード: ${c.name}`}
+                                />
+                              ))}
+
+                              <label
+                                className="w-3.5 h-3.5 rounded-full border border-white/30 overflow-hidden relative cursor-pointer hover:scale-115 flex items-center justify-center bg-[#21262d]"
+                                title="カスタムリード色を選択"
+                              >
+                                <input
+                                  type="color"
+                                  value={p.leashColor || '#f0883e'}
+                                  onChange={(e) =>
+                                    onUpdatePoint(p.id, { leashColor: e.target.value })
+                                  }
+                                  className="absolute inset-0 opacity-0 cursor-pointer w-full h-full"
+                                />
+                                <span className="text-[8px] text-white/90 font-bold leading-none">＋</span>
+                              </label>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setOpenLeashColorPickerId(null)}
+                              className="text-[10px] text-[#8b949e] hover:text-white px-1 leading-none"
+                              title="閉じる"
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        )}
+
+                        <div
+                          className="flex items-center gap-2 text-[11px]"
+                          style={{ color: p.leashColor || '#f0883e' }}
+                        >
                           <span className="whitespace-nowrap">長さ:</span>
                           <input
                             type="range"
@@ -499,7 +693,8 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                             onChange={(e) =>
                               onUpdatePoint(p.id, { leashLength: parseInt(e.target.value, 10) })
                             }
-                            className="flex-1 cursor-pointer accent-[#f0883e]"
+                            className="flex-1 cursor-pointer"
+                            style={{ accentColor: p.leashColor || '#f0883e' }}
                           />
                           <span className="font-mono text-[10px] w-9 text-right">
                             {p.leashLength}px

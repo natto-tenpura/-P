@@ -183,9 +183,10 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
       // 2. Draw Shapes
       const currentShapes = shapesRef.current;
       currentShapes.forEach((s) => {
-        ctx.lineWidth = 1.5;
-        ctx.strokeStyle = 'rgba(88, 166, 255, 0.5)';
-        ctx.fillStyle = 'rgba(88, 166, 255, 0.05)';
+        const shapeColor = s.color || '#58a6ff';
+        ctx.lineWidth = 1.8;
+        ctx.strokeStyle = `${shapeColor}99`;
+        ctx.fillStyle = `${shapeColor}14`;
 
         if (s.type === 'circle') {
           ctx.beginPath();
@@ -214,7 +215,7 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
             wpts.forEach((pt) => {
               ctx.beginPath();
               ctx.arc(pt.x, pt.y, 5, 0, Math.PI * 2);
-              ctx.fillStyle = '#58a6ff';
+              ctx.fillStyle = shapeColor;
               ctx.fill();
               ctx.strokeStyle = '#ffffff';
               ctx.lineWidth = 1.5;
@@ -225,7 +226,7 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
 
         // Shape Center Drag & Name Indicator
         ctx.font = '11px "Plus Jakarta Sans", sans-serif';
-        ctx.fillStyle = 'rgba(88, 166, 255, 0.85)';
+        ctx.fillStyle = `${shapeColor}ee`;
         ctx.fillText(`✛ ${s.name}`, s.x - 20, s.y - s.size - 10);
       });
 
@@ -533,8 +534,9 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
             for (let i = 1; i < p.trail.length; i++) {
               ctx.lineTo(p.trail[i].x, p.trail[i].y);
             }
-            ctx.strokeStyle = p.color ? `${p.color}66` : 'rgba(88, 166, 255, 0.35)';
-            ctx.lineWidth = 1.8;
+            const activeTrailColor = p.trailColor || p.color || '#58a6ff';
+            ctx.strokeStyle = `${activeTrailColor}77`;
+            ctx.lineWidth = 2.0;
             ctx.stroke();
           }
         }
@@ -553,10 +555,12 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
           }
 
           if (anchor) {
+            const activeLeashColor = p.leashColor || '#f0883e';
+
             // Dashed tether range circle
             ctx.beginPath();
             ctx.arc(anchor.x, anchor.y, p.leashLength, 0, Math.PI * 2);
-            ctx.strokeStyle = 'rgba(240, 136, 62, 0.2)';
+            ctx.strokeStyle = `${activeLeashColor}33`;
             ctx.setLineDash([4, 4]);
             ctx.lineWidth = 1;
             ctx.stroke();
@@ -573,14 +577,14 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
             const midX = (p.x + anchor.x) / 2;
             const midY = (p.y + anchor.y) / 2 + slack;
             ctx.quadraticCurveTo(midX, midY, anchor.x, anchor.y);
-            ctx.strokeStyle = dist >= p.leashLength - 1 ? 'rgba(255, 110, 80, 0.9)' : 'rgba(240, 136, 62, 0.8)';
-            ctx.lineWidth = dist >= p.leashLength - 1 ? 2.2 : 1.5;
+            ctx.strokeStyle = dist >= p.leashLength - 1 ? activeLeashColor : `${activeLeashColor}cc`;
+            ctx.lineWidth = dist >= p.leashLength - 1 ? 2.5 : 1.8;
             ctx.stroke();
 
             // Collar ring
             ctx.beginPath();
             ctx.arc(p.x, p.y, p.radius + 3, 0, Math.PI * 2);
-            ctx.strokeStyle = '#f0883e';
+            ctx.strokeStyle = activeLeashColor;
             ctx.lineWidth = 1.5;
             ctx.stroke();
           }

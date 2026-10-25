@@ -13,6 +13,7 @@ export interface ShapeData {
   y: number;
   size: number;
   vertices: Vertex[] | null;
+  color?: string;
 }
 
 export interface StakeData {
@@ -40,6 +41,7 @@ export interface PointData {
   y: number;
   radius: number;
   color: string;
+  trailColor?: string;
   baseSpeed: number;
   speed: number;
   angle: number;
@@ -57,6 +59,7 @@ export interface PointData {
   hasLeash: boolean;
   leashTarget: string; // 'mouse' | 'stake:<id>'
   leashLength: number;
+  leashColor?: string;
   trail: { x: number; y: number }[];
 }
 
@@ -73,6 +76,8 @@ export interface BoardData {
     leashTarget: string;
     leashLength: number;
     color?: string;
+    trailColor?: string;
+    leashColor?: string;
   }[];
   shapes: {
     id: number;
@@ -82,6 +87,7 @@ export interface BoardData {
     relY: number;
     size: number;
     vertices: Vertex[] | null;
+    color?: string;
   }[];
   stakes: {
     id: number;
