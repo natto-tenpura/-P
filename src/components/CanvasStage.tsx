@@ -615,16 +615,12 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
           ctx.stroke();
         }
 
-        // Coordinates & Name Tag
+        // Name Tag
         ctx.font = 'bold 12px "Plus Jakarta Sans", sans-serif';
         ctx.fillStyle = isMatched ? '#f1e05a' : '#ffffff';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
-        ctx.fillText(
-          `${p.name} (${toMathX(p.x, originX)}, ${toMathY(p.y, originY)})`,
-          p.x + 10,
-          p.y - 4
-        );
+        ctx.fillText(p.name, p.x + 10, p.y - 4);
       });
 
       ctx.restore();
