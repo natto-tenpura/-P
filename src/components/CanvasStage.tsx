@@ -624,7 +624,7 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
         ctx.fillStyle = isMatched ? '#f1e05a' : '#ffffff';
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
-        ctx.fillText(p.name, p.x + 10, p.y - 4);
+        ctx.fillText(p.name, p.x + (p.radius || 6) + 5, p.y - 4);
       });
 
       ctx.restore();
@@ -668,7 +668,7 @@ export const CanvasStage: React.FC<CanvasStageProps> = ({
     const currentPoints = pointsRef.current;
     for (let i = currentPoints.length - 1; i >= 0; i--) {
       const p = currentPoints[i];
-      if (Math.hypot(p.x - clientX, p.y - clientY) < 24) {
+      if (Math.hypot(p.x - clientX, p.y - clientY) < Math.max(24, (p.radius || 6) + 8)) {
         draggingObjRef.current = { type: 'point', id: p.id };
         p.isBeingDragged = true;
         dragOffsetRef.current = { x: clientX - p.x, y: clientY - p.y };

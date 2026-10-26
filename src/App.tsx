@@ -43,11 +43,13 @@ export default function App() {
     pointId: string;
     currentName: string;
     currentColor: string;
+    currentRadius: number;
   }>({
     isOpen: false,
     pointId: '',
     currentName: '',
     currentColor: '#58a6ff',
+    currentRadius: 6,
   });
 
   const isInitializedRef = useRef<boolean>(false);
@@ -76,6 +78,7 @@ export default function App() {
               color: p.color,
               trailColor: p.trailColor,
               leashColor: p.leashColor,
+              radius: p.radius || 6,
             })),
             shapes: shapes.map((s) => ({
               id: s.id,
@@ -163,7 +166,7 @@ export default function App() {
             name: p.name,
             x: originX + p.relX,
             y: originY + p.relY,
-            radius: 6,
+            radius: p.radius || 6,
             color: p.color || '#58a6ff',
             trailColor: p.trailColor,
             baseSpeed,
@@ -515,17 +518,25 @@ export default function App() {
       pointId: point.id,
       currentName: point.name,
       currentColor: point.color || '#58a6ff',
+      currentRadius: point.radius || 6,
     });
   };
 
-  const handleConfirmRename = (newName: string, newColor?: string) => {
+  const handleConfirmRename = (newName: string, newColor?: string, newRadius?: number) => {
     if (renameModal.pointId) {
       handleUpdatePoint(renameModal.pointId, {
         name: newName,
         ...(newColor ? { color: newColor } : {}),
+        ...(newRadius !== undefined ? { radius: newRadius } : {}),
       });
     }
-    setRenameModal({ isOpen: false, pointId: '', currentName: '', currentColor: '#58a6ff' });
+    setRenameModal({
+      isOpen: false,
+      pointId: '',
+      currentName: '',
+      currentColor: '#58a6ff',
+      currentRadius: 6,
+    });
   };
 
   return (
@@ -584,9 +595,16 @@ export default function App() {
         isOpen={renameModal.isOpen}
         initialName={renameModal.currentName}
         initialColor={renameModal.currentColor}
+        initialRadius={renameModal.currentRadius}
         onConfirm={handleConfirmRename}
         onClose={() =>
-          setRenameModal({ isOpen: false, pointId: '', currentName: '', currentColor: '#58a6ff' })
+          setRenameModal({
+            isOpen: false,
+            pointId: '',
+            currentName: '',
+            currentColor: '#58a6ff',
+            currentRadius: 6,
+          })
         }
       />
     </div>

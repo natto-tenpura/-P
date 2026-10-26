@@ -6,7 +6,8 @@ interface RenameModalProps {
   isOpen: boolean;
   initialName: string;
   initialColor?: string;
-  onConfirm: (newName: string, newColor?: string) => void;
+  initialRadius?: number;
+  onConfirm: (newName: string, newColor?: string, newRadius?: number) => void;
   onClose: () => void;
 }
 
@@ -14,23 +15,26 @@ export const RenameModal: React.FC<RenameModalProps> = ({
   isOpen,
   initialName,
   initialColor = '#58a6ff',
+  initialRadius = 6,
   onConfirm,
   onClose,
 }) => {
   const [name, setName] = useState(initialName);
   const [color, setColor] = useState(initialColor);
+  const [radius, setRadius] = useState(initialRadius);
 
   useEffect(() => {
     setName(initialName);
     setColor(initialColor);
-  }, [initialName, initialColor, isOpen]);
+    setRadius(initialRadius);
+  }, [initialName, initialColor, initialRadius, isOpen]);
 
   if (!isOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
-      onConfirm(name.trim(), color);
+      onConfirm(name.trim(), color, radius);
     }
   };
 
@@ -39,10 +43,14 @@ export const RenameModal: React.FC<RenameModalProps> = ({
       <div className="w-full max-w-xs bg-[#161b22] border border-[#30363d] rounded-xl shadow-2xl p-4 text-[#e6edf3]">
         <h3 className="text-sm font-semibold text-[#f0883e] mb-3 flex items-center gap-2">
           <span
-            className="w-3.5 h-3.5 rounded-full inline-block border border-white/40 shadow-xs"
-            style={{ backgroundColor: color }}
+            className="rounded-full inline-block border border-white/40 shadow-xs transition-all"
+            style={{
+              backgroundColor: color,
+              width: `${Math.max(10, Math.min(22, radius * 1.5))}px`,
+              height: `${Math.max(10, Math.min(22, radius * 1.5))}px`,
+            }}
           />
-          <span>点の名前と色を変更</span>
+          <span>点の設定 (名前・色・大きさ)</span>
         </h3>
 
         <form onSubmit={handleSubmit} className="space-y-3.5">
@@ -94,6 +102,22 @@ export const RenameModal: React.FC<RenameModalProps> = ({
                 <span className="text-[10px] text-white/80 font-bold">＋</span>
               </label>
             </div>
+          </div>
+
+          <div>
+            <div className="flex justify-between items-center text-[11px] text-[#8b949e] mb-1">
+              <span>大きさ (半径)</span>
+              <span className="font-mono text-white text-xs">{radius}px</span>
+            </div>
+            <input
+              type="range"
+              min="3"
+              max="24"
+              value={radius}
+              onChange={(e) => setRadius(parseInt(e.target.value, 10))}
+              className="w-full cursor-pointer"
+              style={{ accentColor: color }}
+            />
           </div>
 
           <div className="flex justify-end gap-2 text-xs pt-1">

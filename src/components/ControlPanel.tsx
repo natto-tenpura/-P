@@ -703,6 +703,25 @@ export const ControlPanel: React.FC<ControlPanelProps> = ({
                       </div>
                     )}
 
+                    {/* Point Size Slider */}
+                    <div className="flex items-center gap-2 text-[11px] text-[#8b949e] bg-[#0d1117] px-2 py-0.5 rounded border border-[#21262d]">
+                      <span className="whitespace-nowrap">サイズ:</span>
+                      <input
+                        type="range"
+                        min="3"
+                        max="24"
+                        value={p.radius || 6}
+                        onChange={(e) =>
+                          onUpdatePoint(p.id, { radius: parseInt(e.target.value, 10) })
+                        }
+                        className="flex-1 cursor-pointer"
+                        style={{ accentColor: p.color || '#58a6ff' }}
+                      />
+                      <span className="font-mono text-[10px] w-7 text-right text-white/90">
+                        {p.radius || 6}px
+                      </span>
+                    </div>
+
                     {/* Motion Mode Selection */}
                     <select
                       disabled={p.hasLeash}

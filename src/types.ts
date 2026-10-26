@@ -78,6 +78,7 @@ export interface BoardData {
     color?: string;
     trailColor?: string;
     leashColor?: string;
+    radius?: number;
   }[];
   shapes: {
     id: number;
